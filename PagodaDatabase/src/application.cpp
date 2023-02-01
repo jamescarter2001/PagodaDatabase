@@ -1,6 +1,5 @@
 #include "pgpch.h"
 
-#include "database/common/pg_bina_raw.h"
 #include "database/common/pg_bina_reader.h"
 
 #include "database/set/pg_set.h"

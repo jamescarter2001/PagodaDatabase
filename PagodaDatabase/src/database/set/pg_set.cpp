@@ -39,6 +39,8 @@ namespace Pagoda::Database {
         std::cout << "Unknown Vector 2: " << oe->UnknownVector2.X << " " << oe->UnknownVector2.Y << " " << oe->UnknownVector2.Z << " " << oe->UnknownVector2.W << std::endl;
         std::cout << "Position: " << oe->Position.X << " " << oe->Position.Y << " " << oe->Position.Z << std::endl;
         std::cout << "Rotation: " << oe->Rotation.X << " " << oe->Rotation.Y << " " << oe->Rotation.Z << std::endl;
+        std::cout << "Child Position: " << oe->ChildPositionOffset.X << " " << oe->ChildPositionOffset.Y << " " << oe->ChildPositionOffset.Z << std::endl;
+        std::cout << "Child Rotation: " << oe->ChildRotationOffset.X << " " << oe->ChildRotationOffset.Y << " " << oe->ChildRotationOffset.Z << std::endl;
 
         std::cout << "Tags: ";
         for (int i = 0; i < oe->TagCount; i++) {

@@ -1,4 +1,4 @@
-#include "btpch.h"
+#include "pgpch.h"
 
 #include "pg_bina_reader.h"
 
@@ -9,6 +9,7 @@ namespace Pagoda::Database {
     BinaReader::~BinaReader() {
     }
 
+    // Old BINA loading.
     Bina BinaReader::ReadLegacy(std::string path) {
         std::ifstream file(path, std::ios::binary | std::ios::in);
 
@@ -35,6 +36,7 @@ namespace Pagoda::Database {
         return binaFile;
     }
 
+    // Direct memory loading.
     std::vector<data_t*> BinaReader::Read(std::string path) {
         std::ifstream file(path, std::ios::binary | std::ios::in);
 
@@ -62,10 +64,7 @@ namespace Pagoda::Database {
             // Fix pointers in memory.
             for (unsigned long long o : offsets) {
                 unsigned long long* ptr = (unsigned long long*)o;
-                unsigned long long unaltered = *ptr;
                 *ptr = *ptr + dataBlockStart;
-
-                char* test = (char*) *ptr;
             }
 
             dataBlocks.push_back(current + sizeof(*nh) + nh->additionalDataLength);
@@ -75,9 +74,4 @@ namespace Pagoda::Database {
 
         return dataBlocks;
     }
-
-    void BinaReader::ResolveOffsets(node_t* n) {
-
-    }
-
 }

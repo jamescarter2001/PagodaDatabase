@@ -27,7 +27,7 @@
     <ClCompile Include="src\Application.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\btpch.cpp">
+    <ClCompile Include="src\pgpch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -47,7 +47,10 @@
     <ClInclude Include="src\database\set\pg_set.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\btpch.h">
+    <ClInclude Include="src\pgpch.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\database\set\pg_tag.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

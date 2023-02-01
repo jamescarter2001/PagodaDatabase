@@ -1,5 +1,5 @@
 #pragma once
-#include "btpch.h"
+#include "pgpch.h"
 
 #include "pg_bina.h"
 
@@ -14,8 +14,5 @@ namespace Pagoda::Database {
 
         Bina ReadLegacy(std::string path);
         std::vector<data_t*> Read(std::string path);
-
-    private:
-        void ResolveOffsets(node_t* n);
     };
 }

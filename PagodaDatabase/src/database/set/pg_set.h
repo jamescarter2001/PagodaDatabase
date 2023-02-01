@@ -1,9 +1,11 @@
 #pragma once
 
-#include "btpch.h"
+#include "pgpch.h"
 
 #include "common/pg_bina.h"
 #include "common/pg_node_data.h"
+
+#include "pg_tag.h"
 
 #define TAG_TYPE_RANGE_SPAWNING "RangeSpawning"
 
@@ -19,28 +21,6 @@ namespace Pagoda::Database {
     struct ForcesObjectReference {
         unsigned short ID;
         unsigned short GroupID;
-    };
-
-    struct RangersUnknown {
-        Vector3 Position;
-        Vector3 Rotation;
-        Vector3 ChildPositionOffset;
-        Vector3 ChildRotationOffset;
-    };
-
-    struct Tag {
-        unsigned long long Padding1;
-        char* TagType;
-        unsigned long long DataLength;
-    };
-
-    struct RangeSpawningData {
-        float RangeIn;
-        float RangeOut;
-    };
-
-    struct RangeSpawning : public Tag {
-        RangeSpawningData* Data;
     };
 
     struct ObjectEntry {

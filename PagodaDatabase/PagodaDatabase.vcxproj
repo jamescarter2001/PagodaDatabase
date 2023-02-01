@@ -107,6 +107,8 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)PagodaDatabase\src\database;$(SolutionDir)PagodaDatabase\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pgpch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -131,18 +133,21 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\Application.cpp" />
-    <ClCompile Include="src\btpch.cpp" />
+    <ClCompile Include="src\pgpch.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="src\database\common\pg_bina.cpp" />
     <ClCompile Include="src\database\common\pg_bina_reader.cpp" />
     <ClCompile Include="src\database\set\pg_set.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\btpch.h" />
+    <ClInclude Include="src\pgpch.h" />
     <ClInclude Include="src\database\common\pg_bina.h" />
     <ClInclude Include="src\database\common\pg_bina_raw.h" />
     <ClInclude Include="src\database\common\pg_bina_reader.h" />
     <ClInclude Include="src\database\common\pg_node_data.h" />
     <ClInclude Include="src\database\set\pg_set.h" />
+    <ClInclude Include="src\database\set\pg_tag.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -9,33 +9,6 @@ namespace Pagoda::Database {
     BinaReader::~BinaReader() {
     }
 
-    // Old BINA loading.
-    Bina BinaReader::ReadLegacy(std::string path) {
-        std::ifstream file(path, std::ios::binary | std::ios::in);
-
-        Header binaHeader;
-        READ_STRUCT(file, binaHeader);
-
-        Bina binaFile;
-
-        for (int i = 0; i < binaHeader.nodeCount; i++) {
-            NodeHeader nodeHeader;
-            READ_STRUCT(file, nodeHeader);
-
-            NodeBody* nodeBody = new NodeBody(nodeHeader);
-
-            READ_BYTES(file, nodeBody->additionalData, nodeHeader.additionalDataLength);
-            READ_BYTES(file, nodeBody->dataBlock, nodeHeader.stringTableOffset);
-            READ_BYTES(file, nodeBody->stringTable, nodeHeader.stringTableLength);
-            READ_BYTES(file, nodeBody->offsetTable, nodeHeader.offsetTableLength);
-
-            Node* node = new Node(nodeHeader, nodeBody);
-            binaFile.AddNode(node);
-        }
-
-        return binaFile;
-    }
-
     // Direct memory loading.
     std::vector<data_t*> BinaReader::Read(std::string path) {
         std::ifstream file(path, std::ios::binary | std::ios::in);

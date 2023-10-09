@@ -12,7 +12,7 @@ namespace Pagoda::Database {
 
     struct NodeHeader {
         char signature[4];
-        int length;  // Only true if the DATA node is the only node in the file, however this is always the case from our findings.
+        unsigned int length;  // Only true if the DATA node is the only node in the file, however this is always the case from our findings.
 
         unsigned int stringTableOffset;  // The non-absolute (relative to the beginning of the Data array below, which is always 0x40 from our findings) offset to the BINA String Table.
         unsigned int stringTableLength;  // The length of the BINA String Table.

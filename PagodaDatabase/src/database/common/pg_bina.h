@@ -12,6 +12,12 @@ typedef char data_t;
 #define BINA_OFFSET_14 0b10000000
 #define BINA_OFFSET_30 0b11000000
 
+const char binaSig[5] = "BINA";
+const char binaVer[4] = "100";
+const char dataSig[5] = "DATA";
+
+const unsigned int additionalDataLength = 0x18;
+
 namespace Pagoda::Database {
     class Node {
     public:

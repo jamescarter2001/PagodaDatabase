@@ -18,6 +18,10 @@ namespace Pagoda::Database {
         float X, Y, Z, W;
     };
 
+    struct RangersUUID {
+        unsigned int X, Y, Z, W;
+    };
+
     struct ForcesObjectReference {
         unsigned short ID;
         unsigned short GroupID;
@@ -29,8 +33,8 @@ namespace Pagoda::Database {
         char* ObjectName;
         ForcesObjectReference ID;
         ForcesObjectReference ParentID;
-        Vector4 UnknownVector1;
-        Vector4 UnknownVector2;
+        RangersUUID UUID;
+        RangersUUID ParentUUID;
         Vector3 Position;
         Vector3 Rotation;
         Vector3 ChildPositionOffset;
@@ -57,7 +61,7 @@ namespace Pagoda::Database {
         SetData(std::vector<ObjectEntry*> objectEntries);
         static SetData SetDataFromNodeData(data_t* data);
         virtual ~SetData();
-        virtual void Print() const;
+        virtual void Print() const override;
 
         static void PrintTag(Tag* tag);
     private:

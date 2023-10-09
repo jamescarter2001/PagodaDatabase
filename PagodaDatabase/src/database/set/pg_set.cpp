@@ -31,12 +31,13 @@ namespace Pagoda::Database {
  }
 
  void SetData::Print() const {
+    std::cout << "SET DATA" << std::endl;
     std::cout << "----------" << std::endl;
     for (ObjectEntry* oe : this->m_ObjectEntries) {
         std::cout << "Name: " << oe->ObjectName << std::endl;
         std::cout << "Type: " << oe->ObjectType << std::endl;
-        std::cout << "Unknown Vector 1: " << oe->UnknownVector1.X << " " << oe->UnknownVector1.Y << " " << oe->UnknownVector1.Z << " " << oe->UnknownVector1.W << std::endl;
-        std::cout << "Unknown Vector 2: " << oe->UnknownVector2.X << " " << oe->UnknownVector2.Y << " " << oe->UnknownVector2.Z << " " << oe->UnknownVector2.W << std::endl;
+        std::cout << "UUID: " << std::hex << oe->UUID.X << " " << oe->UUID.Y << " " << oe->UUID.Z << " " << oe->UUID.W << " (UINT128)" << std::endl;
+        std::cout << "Parent UUID: " << std::hex << oe->ParentUUID.X << " " << oe->ParentUUID.Y << " " << oe->ParentUUID.Z << " " << oe->ParentUUID.W << " (UINT128)" << std::endl;
         std::cout << "Position: " << oe->Position.X << " " << oe->Position.Y << " " << oe->Position.Z << std::endl;
         std::cout << "Rotation: " << oe->Rotation.X << " " << oe->Rotation.Y << " " << oe->Rotation.Z << std::endl;
         std::cout << "Child Position: " << oe->ChildPositionOffset.X << " " << oe->ChildPositionOffset.Y << " " << oe->ChildPositionOffset.Z << std::endl;
@@ -52,13 +53,15 @@ namespace Pagoda::Database {
         std::cout << "----------" << std::endl;
     }
 
-    std::cout << "Count: " << this->m_ObjectEntries.size() << std::endl;
+    std::cout << "Count: " << std::dec << this->m_ObjectEntries.size() << std::endl;
  }
 
  void SetData::PrintTag(Tag* tag) {
      if (std::string(tag->TagType) == TAG_TYPE_RANGE_SPAWNING) {
         RangeSpawning* rs = (RangeSpawning*)tag;
         std::cout << TAG_TYPE_RANGE_SPAWNING << " (" << rs->Data->RangeIn << ", " << rs->Data->RangeOut << ") ";
-    }
+     } else {
+        std::cout << tag->TagType;
+     }
  }
 }

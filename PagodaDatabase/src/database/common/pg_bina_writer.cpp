@@ -24,11 +24,20 @@ namespace Pagoda::Database {
             this->m_offsetMap.insert({structData, *offset});
             *offset += structSize;
         }
+
+        unsigned long long alignment = (unsigned long long)*offset % 4;
+
+        if (alignment != 0) {
+            *offset += 4 - alignment;
+        }
     }
 
     void BinaWriter::Write(const char filePath[]) {
+        unsigned int nodeAlignment = GetAlignment(this->m_nodeSize);
+        unsigned int stringAlignment = GetAlignment(this->m_stringTableSize);
+
         // Allocate enough bytes for bina header and node data.
-        unsigned long long heapSize = sizeof(Header) + sizeof(NodeHeader) + additionalDataLength + this->m_nodeSize + this->m_stringTableSize;
+        unsigned long long heapSize = sizeof(Header) + sizeof(NodeHeader) + additionalDataLength + this->m_nodeSize + this->m_stringTableSize + nodeAlignment + stringAlignment;
         char* pBinaNode = new char[heapSize];
 
         // Initialise the allocated heap space to zero.
@@ -57,8 +66,8 @@ namespace Pagoda::Database {
         WriteData(&pCurrentOffset, this->m_strings);
 
         // Set node header information.
-        nodeHeader->stringTableOffset = (unsigned int)this->m_nodeSize;
-        nodeHeader->stringTableLength = (unsigned int)this->m_stringTableSize;
+        nodeHeader->stringTableOffset = (unsigned int)this->m_nodeSize + nodeAlignment;
+        nodeHeader->stringTableLength = (unsigned int)this->m_stringTableSize + stringAlignment;
         nodeHeader->offsetTableLength = (unsigned int)this->m_offsets.size() + 1;
         nodeHeader->additionalDataLength = 0x18;
 
@@ -68,38 +77,55 @@ namespace Pagoda::Database {
         unsigned int offsetTableSize = 0;
 
         // Write offset table.
-        std::stringstream stream;
+        std::stringstream offsetTableStream;
         for (unsigned long long o : this->m_offsets) {
             if (o > 0xFFFC) {
                 uint32_t val = ((uint32_t)o >> 2) | 0xC0000000;
-                char* test = (char*)&val;
-                stream << test[3] << test[2] << test[1] << test[0];
+                char* bytes = (char*)&val;
+                offsetTableStream << bytes[3] << bytes[2] << bytes[1] << bytes[0];
                 offsetTableSize+=4;
             } else if (o > 0xFC) {
                 uint16_t val = ((uint16_t)o >> 2) | 0x8000;
-                char* test = (char*)&val;
-                stream << test[1] << test[0];
+                char* bytes = (char*)&val;
+                offsetTableStream << bytes[1] << bytes[0];
                 offsetTableSize+=2;
             } else {
                 uint8_t val = ((uint8_t)o >> 2) | 0x40;
-                stream << val;
+                offsetTableStream << val;
                 offsetTableSize++;
             }
         }
 
+        // Account for null at end of offset table.
+        offsetTableSize++;
+
+        unsigned int offsetTableAlignment = GetAlignment(offsetTableSize);
+
         // Set BINA and node size, then write the file.
-        nodeHeader->length = (unsigned int)sizeof(NodeHeader) + additionalDataLength + (unsigned int)this->m_nodeSize + (unsigned int)this->m_stringTableSize + offsetTableSize + 1;
+        nodeHeader->offsetTableLength = offsetTableSize;
+        nodeHeader->length = (unsigned int)sizeof(NodeHeader) + additionalDataLength + (unsigned int)this->m_nodeSize + nodeAlignment + (unsigned int)this->m_stringTableSize + stringAlignment + offsetTableSize + offsetTableAlignment;
         binaHeader->fileSize = sizeof(Header) + (size_t)nodeHeader->length;
-        outFile.write(pBinaNode, binaHeader->fileSize - offsetTableSize - 1);
+        outFile.write(pBinaNode, binaHeader->fileSize - offsetTableSize - offsetTableAlignment);
 
-        outFile << stream.str();
+        outFile << offsetTableStream.str();
 
-        outFile << '\0';
+        for (unsigned int i = 0; i < (offsetTableAlignment + 1); i++) {
+            outFile << '\0';
+        }
+
         outFile.close();
 
         delete[] pBinaNode;
     }
 
+    unsigned int BinaWriter::GetAlignment(unsigned int count) {
+        unsigned int val = 4 - (count % 4);
+        if (val == 4) {
+            return 0;
+        } else {
+            return val;
+        }
+    }
 
     void BinaWriter::FixPointers(char* nodeBody, std::vector<unsigned long long> offsets) {
         unsigned int count = (unsigned int)(this->m_nodeSize / sizeof(void*));

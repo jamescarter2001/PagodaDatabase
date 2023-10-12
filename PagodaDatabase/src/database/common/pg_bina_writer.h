@@ -19,6 +19,7 @@ namespace Pagoda::Database {
 
         void WriteData(char** offset, std::vector<void*> structs);
         void FixPointers(char* nodeBody, std::vector<unsigned long long> offsets);
+        unsigned int GetAlignment(unsigned int count);
 
     private:
         std::vector<void*> m_structs;

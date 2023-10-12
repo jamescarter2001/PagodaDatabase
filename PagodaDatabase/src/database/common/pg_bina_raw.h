@@ -21,25 +21,4 @@ namespace Pagoda::Database {
         short additionalDataLength;
         short padding;  // Just two nulls to pad-out AdditionalDataLength to 4 bytes
     };
-
-    struct NodeBody {
-        NodeBody(NodeHeader nodeHeader) {
-            this->additionalData = new char[nodeHeader.additionalDataLength];
-            this->dataBlock = new char[nodeHeader.stringTableOffset];
-            this->stringTable = new char[nodeHeader.stringTableLength];
-            this->offsetTable = new char[nodeHeader.offsetTableLength];
-        }
-
-        virtual ~NodeBody() {
-            delete additionalData;
-            delete dataBlock;
-            delete stringTable;
-            delete offsetTable;
-        }
-
-        char* additionalData;
-        char* dataBlock;
-        char* stringTable;
-        char* offsetTable;
-    };
 }

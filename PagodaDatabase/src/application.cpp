@@ -58,13 +58,7 @@ int main() {
     bw.AddStruct(en2, sizeof(en2), true);
     bw.Write("../output/dummy_cube.orc");
 
-    std::cout << elements[0]->name << std::endl;
-
     Pagoda::Database::BinaReader binaReader;
-
-    for (auto e : elements) {
-        std::cout << e->name << std::endl;
-    }
 
     //std::vector<data_t*> binaFile = binaReader.Read("E:/w9d02_gedit/w9d02_autotest.gedit");
     std::vector<data_t*> binaFile2 = binaReader.Read("../output/dummy_cube.orc");

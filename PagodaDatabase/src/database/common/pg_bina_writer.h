@@ -4,14 +4,14 @@
 namespace Pagoda::Database {
     class BinaWriter {
     public:
-        void AddStruct(void* structData, unsigned int size, bool isString = false);
+        void AddStruct(void* structData, size_t size, bool isString = false);
 
         template<typename T>
-        void AddStructVector(std::vector<T*>& structData, unsigned int size, bool isString = false) {
-            this->AddStruct(&structData[0], sizeof(T*) * structData.size());
+        void AddStructVector(std::vector<T*>& structData, bool isString = false) {
+            this->AddStruct(&structData[0], sizeof(T*) * (unsigned int)structData.size());
 
             for (T* s : structData) {
-                this->AddStruct(s, size, isString);
+                this->AddStruct(s, sizeof(T), isString);
             }
         }
 
@@ -26,9 +26,9 @@ namespace Pagoda::Database {
         std::vector<unsigned long long> m_offsets;
 
         std::map<void*, char*> m_offsetMap;
-        std::map<void*, unsigned int> m_structSizeMap;
+        std::map<void*, size_t> m_structSizeMap;
 
-        unsigned int m_nodeSize = 0;
-        unsigned int m_stringTableSize = 0;
+        size_t m_nodeSize = 0;
+        size_t m_stringTableSize = 0;
     };
 }

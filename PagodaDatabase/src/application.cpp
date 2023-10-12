@@ -43,17 +43,16 @@ int main() {
     elements.push_back(&e1);
     elements.push_back(&e2);
 
-    Pagoda::Database::ModelHeader cube = {cubeArray, indices, &elements[0], (unsigned int)sizeof(cubeArray), (unsigned int)sizeof(indices), (unsigned int)elements.size()};
+    Pagoda::Database::ModelHeader cubeHeader = {cubeArray, indices, &elements[0], (unsigned int)sizeof(cubeArray), (unsigned int)sizeof(indices), (unsigned int)elements.size()};
 
     std::cout << std::hex << &elements[0] << std::endl;
 
     Pagoda::Database::BinaWriter bw;
 
-    bw.AddStruct(&cube, sizeof(cube));
-    bw.AddStructVector<Pagoda::Database::VertexBufferElement>(elements, sizeof(Pagoda::Database::VertexBufferElement));
-    //bw.AddStructArray((void**)&elements[0], 2, sizeof(Pagoda::Database::VertexBufferElement), {0});
+    bw.AddStruct(&cubeHeader, sizeof(cubeHeader));
     bw.AddStruct(cubeArray, sizeof(cubeArray));
     bw.AddStruct(indices, sizeof(indices));
+    bw.AddStructVector<Pagoda::Database::VertexBufferElement>(elements);
 
     bw.AddStruct(en1, sizeof(en1), true);
     bw.AddStruct(en2, sizeof(en2), true);

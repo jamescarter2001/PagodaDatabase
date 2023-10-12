@@ -14,27 +14,21 @@ namespace Pagoda::Database {
             if (*offsetTable & BINA_OFFSET_6) {
                 unsigned long o = 0;
 
-                unsigned char offset;
-                memcpy(&offset, offsetTable, sizeof(char));
-
-                offset = offset << 2;
-                o = o | offset;
+                uint8_t* dat = (uint8_t*)offsetTable;
+                o = *dat - 0x40;
+                o = o << 2;
 
                 current = current + o;
 
                 offsets.push_back(current);
-
                 offsetTable++;
             } else if (*offsetTable & BINA_OFFSET_14) {
                 unsigned long o = 0;
 
-                unsigned char offset[2];
-                memcpy(&offset, offsetTable, sizeof(char) * 2);
-
-                for (int i = 0; i < sizeof(offset); i++) {
-                    offset[i] = offset[i] << 2;
-                    o = o | offset[i];
-                }
+                uint16_t* dat = (uint16_t*)offsetTable;
+                o = _byteswap_ushort(*dat);
+                o = o - 0x8000;
+                o = o << 2;
 
                 current = current + o;
 
@@ -43,21 +37,20 @@ namespace Pagoda::Database {
             } else if (*offsetTable & BINA_OFFSET_30) {
                 unsigned long o = 0;
 
-                unsigned char offset[4];
-                memcpy(&offset, offsetTable, sizeof(char) * 4);
-
-                for (int i = 0; i < sizeof(offset); i++) {
-                    offset[i] = offset[i] << 2;
-                    o = o | offset[i];
-                }
+                uint32_t* dat = (uint32_t*)offsetTable;
+                o = _byteswap_ulong(*dat);
+                o = o - 0xC0000000;
+                o = o << 2;
 
                 current = current + o;
 
                 offsets.push_back(current);
                 offsetTable = offsetTable + 4;
+            } else {
+                std::cout << "Invalid offset table!" << std::endl;
+                return std::vector<unsigned long long>();
             }
         }
-
         return offsets;
     }
 }

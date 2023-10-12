@@ -2,7 +2,7 @@
 #include "pg_bina_writer.h"
 
 namespace Pagoda::Database {
-    void BinaWriter::AddStruct(void* structData, unsigned int size, bool isString) {
+    void BinaWriter::AddStruct(void* structData, size_t size, bool isString) {
         // Store the size of the struct.
         this->m_structSizeMap.insert({structData, size});
 
@@ -57,7 +57,7 @@ namespace Pagoda::Database {
         WriteData(&pCurrentOffset, this->m_strings);
 
         // Set node header information.
-        nodeHeader->stringTableOffset = this->m_nodeSize;
+        nodeHeader->stringTableOffset = (unsigned int)this->m_nodeSize;
         nodeHeader->stringTableLength = (unsigned int)this->m_stringTableSize;
         nodeHeader->offsetTableLength = (unsigned int)this->m_offsets.size() + 1;
         nodeHeader->additionalDataLength = 0x18;
@@ -65,25 +65,34 @@ namespace Pagoda::Database {
         // Map pointers to the correct structs in the file.
         FixPointers(pNodeBody, this->m_offsets);
 
-        // Set BINA and node size, then write the file.
-        nodeHeader->length = (unsigned int)sizeof(NodeHeader) + additionalDataLength + this->m_nodeSize + this->m_stringTableSize + (unsigned int)this->m_offsets.size() + 1;
-        binaHeader->fileSize = (unsigned int)sizeof(Header) + nodeHeader->length;
-        outFile.write(pBinaNode, binaHeader->fileSize - this->m_offsets.size() - 1);
+        unsigned int offsetTableSize = 0;
 
         // Write offset table.
-        int index = 0;
+        std::stringstream stream;
         for (unsigned long long o : this->m_offsets) {
-            if (o == this->m_offsets[0]) {
-                uint8_t num = ((uint8_t)o >> 2) | 0b01000000;
-                outFile << num;
+            if (o > 0xFFFC) {
+                uint32_t val = ((uint32_t)o >> 2) | 0xC0000000;
+                char* test = (char*)&val;
+                stream << test[3] << test[2] << test[1] << test[0];
+                offsetTableSize+=4;
+            } else if (o > 0xFC) {
+                uint16_t val = ((uint16_t)o >> 2) | 0x8000;
+                char* test = (char*)&val;
+                stream << test[1] << test[0];
+                offsetTableSize+=2;
             } else {
-                int previous = index - 1;
-                unsigned long long relative = o - this->m_offsets[previous];
-                uint8_t num = ((uint8_t)relative >> 2) | 0b01000000;
-                outFile << num;
+                uint8_t val = ((uint8_t)o >> 2) | 0x40;
+                stream << val;
+                offsetTableSize++;
             }
-            index++;
         }
+
+        // Set BINA and node size, then write the file.
+        nodeHeader->length = (unsigned int)sizeof(NodeHeader) + additionalDataLength + (unsigned int)this->m_nodeSize + (unsigned int)this->m_stringTableSize + offsetTableSize + 1;
+        binaHeader->fileSize = sizeof(Header) + (size_t)nodeHeader->length;
+        outFile.write(pBinaNode, binaHeader->fileSize - offsetTableSize - 1);
+
+        outFile << stream.str();
 
         outFile << '\0';
         outFile.close();
@@ -91,17 +100,21 @@ namespace Pagoda::Database {
         delete[] pBinaNode;
     }
 
+
     void BinaWriter::FixPointers(char* nodeBody, std::vector<unsigned long long> offsets) {
-        unsigned int count = this->m_nodeSize / (unsigned int)sizeof(void*);
+        unsigned int count = (unsigned int)(this->m_nodeSize / sizeof(void*));
         char** ptr = (char**)nodeBody;
 
+        unsigned long long lastOffset = 0;
         for (unsigned int i = 0; i < count; i++) {
             auto relativeOffset = this->m_offsetMap.find(*(ptr + i));
             if (relativeOffset != this->m_offsetMap.end()) {
                 *(ptr + i) = (char*)(relativeOffset->second - nodeBody);
 
                 unsigned long long offset = (unsigned long long)(ptr + i) - (unsigned long long)nodeBody;
-                this->m_offsets.push_back(offset);
+                this->m_offsets.push_back(offset - lastOffset);
+
+                lastOffset = offset;
             }
         }
     }

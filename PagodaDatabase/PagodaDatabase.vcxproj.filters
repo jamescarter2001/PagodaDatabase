@@ -36,6 +36,9 @@
     <ClCompile Include="src\database\common\pg_bina_writer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\database\pac\pg_pac.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\database\common\pg_bina.h">
@@ -63,6 +66,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\database\common\pg_bina_writer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\database\pac\pg_pac.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

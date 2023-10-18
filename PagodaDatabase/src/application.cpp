@@ -1,5 +1,6 @@
 #include "pgpch.h"
 
+#include "database/common/pg_bina.h"
 #include "database/common/pg_bina_reader.h"
 
 #include "database/set/pg_set.h"
@@ -7,6 +8,21 @@
 #include "database/common/pg_bina_writer.h"
 
 int main() {
+    std::ifstream orcFile("E:/stg901_grass.orc", std::ios::binary | std::ios::in);
+    Pagoda::Database::BINAV1Header orcHeader;
+
+    READ_STRUCT(orcFile, orcHeader);
+    orcFile.seekg(0, std::ios::beg);
+
+    if (orcHeader.signature == binaSig) {
+        char* data = new char[orcHeader.fileSize];
+        orcFile.read(data, orcHeader.fileSize);
+
+        Pagoda::Database::Node::PrintOffsets(data + sizeof(orcHeader) + orcHeader.offsetTableOffset, orcHeader.offsetTableLength, sizeof(orcHeader));
+
+        delete[] data;
+    }
+
     float cubeArray[] = {
         0.5f,  0.5f,  0.5f, 1.0f, 0.0f, 1.0f, 1.0f,
        -0.5f,  0.5f, -0.5f, 1.0f, 0.0f, 1.0f, 1.0f,
@@ -43,29 +59,32 @@ int main() {
     elements.push_back(&e1);
     elements.push_back(&e2);
 
-    Pagoda::Database::ModelHeader cubeHeader = {cubeArray, indices, &elements[0], (unsigned int)sizeof(cubeArray), (unsigned int)sizeof(indices), (unsigned int)elements.size()};
+    Pagoda::Database::ModelHeader cubeHeader = {0};
 
-    std::cout << std::hex << &elements[0] << std::endl;
+    cubeHeader.vertexBuffer = cubeArray;
+    cubeHeader.indexBuffer = indices;
+    cubeHeader.elementArray = &elements[0];
+    cubeHeader.vertexBufferSize = (unsigned int)sizeof(cubeArray);
+    cubeHeader.indexBufferSize = (unsigned int)sizeof(indices);
+    cubeHeader.elementCount = (unsigned int)elements.size();
 
     Pagoda::Database::BinaWriter bw;
 
     bw.AddStruct(&cubeHeader, sizeof(cubeHeader));
+
     bw.AddStruct(cubeArray, sizeof(cubeArray));
     bw.AddStruct(indices, sizeof(indices));
     bw.AddStructVector<Pagoda::Database::VertexBufferElement>(elements);
 
-    bw.AddStruct(en1, sizeof(en1), true);
-    bw.AddStruct(en2, sizeof(en2), true);
+    bw.AddString(en1);
+    bw.AddString(en2);
     bw.Write("../output/dummy_cube.orc");
 
     Pagoda::Database::BinaReader binaReader;
 
-    //std::vector<data_t*> binaFile = binaReader.Read("E:/w9d02_gedit/w9d02_autotest.gedit");
-    std::vector<data_t*> binaFile2 = binaReader.Read("../output/dummy_cube.orc");
-    Pagoda::Database::ModelData modelData = Pagoda::Database::ModelData::ModelDataFromNodeData(binaFile2[0]);
-    modelData.Print();
-    //Pagoda::Database::SetData setData = Pagoda::Database::SetData::SetDataFromNodeData(binaFile[0]);
-    //setData.Print();
+    std::vector<data_t*> binaFile = binaReader.Read("C:/w1r03_gedit/w1r03_autotest.gedit");
+    Pagoda::Database::SetData setData = Pagoda::Database::SetData::SetDataFromNodeData(binaFile[0]);
+    setData.Print();
 
     return 0;
 }

@@ -13,8 +13,8 @@ namespace Pagoda::Database {
  }
 
  
- SetData SetData::SetDataFromNodeData(data_t* data) {
-    GEditHeader* header = (GEditHeader*) data;
+ SetData SetData::SetDataFromNodeData(node_t* data) {
+    GEditHeader* header = (GEditHeader*)GetDataBlock(data);
 
     std::vector<ObjectEntry*> objectEntries;
     for (int i = 0; i < header->ObjectCount; i++) {

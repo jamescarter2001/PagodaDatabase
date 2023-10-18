@@ -2,20 +2,23 @@
 #include "pg_bina_writer.h"
 
 namespace Pagoda::Database {
-    void BinaWriter::AddStruct(void* structData, size_t size, bool isString) {
+    void BinaWriter::AddStruct(void* structData, size_t size) {
         // Store the size of the struct.
         this->m_structSizeMap.insert({structData, size});
 
-        // Put strings into a seperate vector so the string table can be written later.
-        if (isString) {
-            this->m_strings.push_back(structData);
-            this->m_stringTableSize += size;
-        } else {
-            this->m_structs.push_back(structData);
-            this->m_nodeSize += size;
-        }
+        this->m_structs.push_back(structData);
+        this->m_structSize += size;
     }
 
+    void BinaWriter::AddString(char* str) {
+        // Get string size, accounting for null termination.
+        size_t size = strlen(str) + 1;
+
+        this->m_structSizeMap.insert({str, size});
+
+        this->m_strings.push_back(str);
+        this->m_stringTableSize += size;
+    }
     
     void BinaWriter::WriteData(char** offset, std::vector<void*> structs) {
         for (void* structData : structs) {
@@ -33,11 +36,11 @@ namespace Pagoda::Database {
     }
 
     void BinaWriter::Write(const char filePath[]) {
-        unsigned int nodeAlignment = GetAlignment(this->m_nodeSize);
+        unsigned int nodeAlignment = GetAlignment(this->m_structSize);
         unsigned int stringAlignment = GetAlignment(this->m_stringTableSize);
 
         // Allocate enough bytes for bina header and node data.
-        unsigned long long heapSize = sizeof(Header) + sizeof(NodeHeader) + additionalDataLength + this->m_nodeSize + this->m_stringTableSize + nodeAlignment + stringAlignment;
+        unsigned long long heapSize = sizeof(Header) + sizeof(NodeHeader) + this->m_structSize + this->m_stringTableSize + nodeAlignment + stringAlignment;
         char* pBinaNode = new char[heapSize];
 
         // Initialise the allocated heap space to zero.
@@ -50,14 +53,14 @@ namespace Pagoda::Database {
         NodeHeader* nodeHeader = (NodeHeader*)(pBinaNode + sizeof(Header));
 
         // Set header information.
-        memcpy(binaHeader->header, binaSig, 4);
+        binaHeader->header = binaSig;
         memcpy(binaHeader->version, binaVer, 3);
         memcpy(nodeHeader->signature, dataSig, 4);
         binaHeader->endianFlag = 'L';
 
         binaHeader->nodeCount = 1;
 
-        char* pCurrentOffset = (char*)nodeHeader + sizeof(NodeHeader) + additionalDataLength;
+        char* pCurrentOffset = (char*)nodeHeader + sizeof(NodeHeader);
 
         char* pNodeBody = pCurrentOffset;
 
@@ -65,14 +68,12 @@ namespace Pagoda::Database {
         WriteData(&pCurrentOffset, this->m_structs);
         WriteData(&pCurrentOffset, this->m_strings);
 
-        // Set node header information.
-        nodeHeader->stringTableOffset = (unsigned int)this->m_nodeSize + nodeAlignment;
+        // Set string table information.
+        nodeHeader->stringTableOffset = (unsigned int)this->m_structSize + nodeAlignment;
         nodeHeader->stringTableLength = (unsigned int)this->m_stringTableSize + stringAlignment;
-        nodeHeader->offsetTableLength = (unsigned int)this->m_offsets.size() + 1;
-        nodeHeader->additionalDataLength = 0x18;
 
         // Map pointers to the correct structs in the file.
-        FixPointers(pNodeBody, this->m_offsets);
+        FixPointers(pNodeBody);
 
         unsigned int offsetTableSize = 0;
 
@@ -102,8 +103,8 @@ namespace Pagoda::Database {
         unsigned int offsetTableAlignment = GetAlignment(offsetTableSize);
 
         // Set BINA and node size, then write the file.
-        nodeHeader->offsetTableLength = offsetTableSize;
-        nodeHeader->length = (unsigned int)sizeof(NodeHeader) + additionalDataLength + (unsigned int)this->m_nodeSize + nodeAlignment + (unsigned int)this->m_stringTableSize + stringAlignment + offsetTableSize + offsetTableAlignment;
+        nodeHeader->offsetTableLength = offsetTableSize + offsetTableAlignment;
+        nodeHeader->length = sizeof(NodeHeader) + (unsigned int)this->m_structSize + nodeAlignment + (unsigned int)this->m_stringTableSize + stringAlignment + offsetTableSize + offsetTableAlignment;
         binaHeader->fileSize = sizeof(Header) + (size_t)nodeHeader->length;
         outFile.write(pBinaNode, binaHeader->fileSize - offsetTableSize - offsetTableAlignment);
 
@@ -118,17 +119,17 @@ namespace Pagoda::Database {
         delete[] pBinaNode;
     }
 
-    unsigned int BinaWriter::GetAlignment(unsigned int count) {
-        unsigned int val = 4 - (count % 4);
+    unsigned int BinaWriter::GetAlignment(size_t count) {
+        size_t val = 4 - (count % 4);
         if (val == 4) {
             return 0;
         } else {
-            return val;
+            return (unsigned int)val;
         }
     }
 
-    void BinaWriter::FixPointers(char* nodeBody, std::vector<unsigned long long> offsets) {
-        unsigned int count = (unsigned int)(this->m_nodeSize / sizeof(void*));
+    void BinaWriter::FixPointers(char* nodeBody) {
+        unsigned int count = (unsigned int)(this->m_structSize / sizeof(void*));
         char** ptr = (char**)nodeBody;
 
         unsigned long long lastOffset = 0;

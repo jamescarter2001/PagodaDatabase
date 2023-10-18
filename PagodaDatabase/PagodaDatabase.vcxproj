@@ -132,6 +132,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\database\pac\pg_pac.cpp" />
     <ClCompile Include="src\database\common\pg_bina_writer.cpp" />
     <ClCompile Include="src\database\model\pg_model.cpp" />
     <ClCompile Include="src\application.cpp" />
@@ -143,6 +144,7 @@
     <ClCompile Include="src\database\set\pg_set.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\database\pac\pg_pac.h" />
     <ClInclude Include="src\database\common\pg_bina_writer.h" />
     <ClInclude Include="src\database\model\pg_model.h" />
     <ClInclude Include="src\pgpch.h" />

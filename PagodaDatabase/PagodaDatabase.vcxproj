@@ -132,10 +132,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\database\common\pg_bina_template_converter.cpp" />
     <ClCompile Include="src\database\pac\pg_pac.cpp" />
     <ClCompile Include="src\database\common\pg_bina_writer.cpp" />
     <ClCompile Include="src\database\model\pg_model.cpp" />
     <ClCompile Include="src\application.cpp" />
+    <ClCompile Include="src\database\util\pg_database_util.cpp" />
     <ClCompile Include="src\pgpch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
@@ -144,9 +146,11 @@
     <ClCompile Include="src\database\set\pg_set.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\database\common\pg_bina_template_converter.h" />
     <ClInclude Include="src\database\pac\pg_pac.h" />
     <ClInclude Include="src\database\common\pg_bina_writer.h" />
     <ClInclude Include="src\database\model\pg_model.h" />
+    <ClInclude Include="src\database\util\pg_database_util.h" />
     <ClInclude Include="src\pgpch.h" />
     <ClInclude Include="src\database\common\pg_bina.h" />
     <ClInclude Include="src\database\common\pg_bina_raw.h" />

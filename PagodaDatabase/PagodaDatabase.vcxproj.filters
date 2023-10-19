@@ -39,6 +39,12 @@
     <ClCompile Include="src\database\pac\pg_pac.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\database\util\pg_database_util.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\database\common\pg_bina_template_converter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\database\common\pg_bina.h">
@@ -69,6 +75,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\database\pac\pg_pac.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\database\common\pg_bina_template_converter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\database\util\pg_database_util.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

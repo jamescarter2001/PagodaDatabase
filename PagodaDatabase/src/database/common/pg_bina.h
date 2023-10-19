@@ -15,8 +15,9 @@ typedef char data_t;
 const unsigned int binaSig = 0x414E4942; // BINA
 const unsigned int pacSig = 0x78434150; // PACx
 
+const unsigned int dataSig = 0x41544144;  // DATA
+
 const char binaVer[4] = "210";
-const char dataSig[5] = "DATA";
 
 const unsigned int additionalDataLength = 0x18;
 

@@ -13,7 +13,7 @@ namespace Pagoda::Database {
     std::vector<node_t*> BinaReader::Read(std::string path) {
         std::ifstream file(path, std::ios::binary | std::ios::in);
 
-        Header binaHeader;
+        BINAHeader binaHeader;
         READ_STRUCT(file, binaHeader);
 
         file.seekg(0, std::ios::beg);

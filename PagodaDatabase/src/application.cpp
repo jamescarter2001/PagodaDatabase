@@ -2,12 +2,16 @@
 
 #include "database/common/pg_bina.h"
 #include "database/common/pg_bina_reader.h"
+#include "database/common/pg_bina_writer.h"
+#include "database/common/pg_bina_template_converter.h"
 
 #include "database/set/pg_set.h"
 #include "database/model/pg_model.h"
-#include "database/common/pg_bina_writer.h"
 
 int main() {
+    Pagoda::Database::BINATemplateConverter conv;
+    conv.ConvertTemplateAndSave("res/basic.bt", "../output/test.orc", PTR_SIZE_64);
+
     std::ifstream orcFile("E:/stg901_grass.orc", std::ios::binary | std::ios::in);
     Pagoda::Database::BINAV1Header orcHeader;
 

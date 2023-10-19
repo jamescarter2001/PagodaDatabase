@@ -35,7 +35,7 @@ namespace Pagoda::Database {
 
     // BINA2
 
-    struct Header {
+    struct BINAHeader {
         unsigned int header;
         char version[3];
         char endianFlag;
@@ -56,7 +56,7 @@ namespace Pagoda::Database {
     };
 
     struct NodeHeader {
-        char signature[4];
+        unsigned int signature;
         unsigned int length;
 
         unsigned int stringTableOffset;

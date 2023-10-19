@@ -1,5 +1,6 @@
 #pragma once
 #include "database/common/pg_bina.h"
+#include "database/util/pg_database_util.h"
 
 namespace Pagoda::Database {
     class BinaWriter {
@@ -7,13 +8,7 @@ namespace Pagoda::Database {
         void AddString(char* str);
         void AddStruct(void* structData, size_t size);
 
-        void AddStringVector(std::vector<char*>& structData) {
-            this->AddStruct(&structData[0], sizeof(char*) * (unsigned int)structData.size());
-
-            for (char* s : structData) {
-                this->AddString(s);
-            }
-        }
+        void AddStringVector(std::vector<char*>& structData);
 
         template<typename T>
         void AddStructVector(std::vector<T*>& structData) {
@@ -22,7 +17,7 @@ namespace Pagoda::Database {
             for (T* s : structData) {
                 this->AddStruct(s, sizeof(T));
             }
-        }
+        };
 
         void Write(const char filePath[]);
 

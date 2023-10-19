@@ -8,8 +8,8 @@ namespace Pagoda::Database {
     ModelData::~ModelData() {
     }
 
-    ModelData ModelData::ModelDataFromNodeData(node_t* data) {
-        ModelHeader* header = (ModelHeader*)GetDataBlock(data);
+    ModelData ModelData::ModelDataFromNodeData(data_t* data) {
+        ModelHeader* header = (ModelHeader*)data;
 
         std::vector<VertexBufferElement*> elements;
         for (unsigned int i = 0; i < header->elementCount; i++) {

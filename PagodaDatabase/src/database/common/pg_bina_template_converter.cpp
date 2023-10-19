@@ -159,6 +159,8 @@ namespace Pagoda::Database {
         std::ofstream outFile(dest, std::ios::out | std::ios::binary);
         outFile.write(outHeap, bh->fileSize);
         outFile.close();
+
+        delete[] outHeap;
     }
 
     void BINATemplateConverter::InspectTemplate(const char src[]) {

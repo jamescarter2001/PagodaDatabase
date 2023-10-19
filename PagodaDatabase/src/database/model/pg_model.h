@@ -28,7 +28,7 @@ namespace Pagoda::Database {
         ModelData(std::vector<VertexBufferElement*> elements);
         virtual ~ModelData();
 
-        static ModelData ModelDataFromNodeData(node_t* data);
+        static ModelData ModelDataFromNodeData(data_t* data);
 
         virtual void Print() const override;
 

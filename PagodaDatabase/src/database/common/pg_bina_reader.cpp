@@ -10,7 +10,7 @@ namespace Pagoda::Database {
     }
 
     // Direct memory loading.
-    std::vector<node_t*> BinaReader::Read(std::string path) {
+    std::vector<data_t*> BinaReader::Read(std::string path) {
         std::ifstream file(path, std::ios::binary | std::ios::in);
 
         BINAHeader binaHeader;
@@ -22,6 +22,7 @@ namespace Pagoda::Database {
         file.read(bina, binaHeader.fileSize);
 
         std::vector<node_t*> nodes;
+        std::vector<node_t*> dataBlocks;
 
         // Create pointers to each node.
         node_t* current = bina + sizeof(binaHeader);
@@ -39,8 +40,10 @@ namespace Pagoda::Database {
                 *ptr = *ptr + dataBlockStart;
             }
 
+            dataBlocks.push_back(current + sizeof(NodeHeader));
+
             current += nh->length;
         }
-        return nodes;
+        return dataBlocks;
     }
 }

@@ -59,7 +59,7 @@ namespace Pagoda::Database {
     public:
         SetData();
         SetData(std::vector<ObjectEntry*> objectEntries);
-        static SetData SetDataFromNodeData(node_t* data);
+        static SetData SetDataFromNodeData(data_t* data);
         virtual ~SetData();
         virtual void Print() const override;
 

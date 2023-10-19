@@ -1,0 +1,10 @@
+head:
+	u32 300
+	u32 500
+	u32 600
+	u32 700
+	str hello
+	str hello
+	ref nodes
+nodes:
+	u32 500

@@ -12,6 +12,6 @@ namespace Pagoda::Database {
         BinaReader();
         virtual ~BinaReader();
 
-        std::vector<data_t*> Read(std::string path);
+        std::vector<node_t*> Read(std::string path);
     };
 }

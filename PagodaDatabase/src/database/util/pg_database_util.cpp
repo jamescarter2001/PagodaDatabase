@@ -14,7 +14,9 @@ namespace Pagoda::Database {
             str.erase(0, pos + delim.length());
         }
 
-        fragments.push_back(str.substr(0, strSize - pos));
+        if (str.substr(0, strSize - pos).find(" ") == std::string::npos) {
+            fragments.push_back(str.substr(0, strSize - pos));
+        }
 
         return fragments;
     }

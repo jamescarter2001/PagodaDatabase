@@ -12,7 +12,7 @@ int main() {
     Pagoda::Database::BINATemplateConverter conv;
     conv.ConvertTemplateAndSave("res/basic.bt", "../output/test.orc", PTR_SIZE_64);
 
-    std::ifstream orcFile("E:/stg901_grass.orc", std::ios::binary | std::ios::in);
+    std::ifstream orcFile("C:/sonic2010/tools/stg901_obj/stg901_grass.orc", std::ios::binary | std::ios::in);
     Pagoda::Database::BINAV1Header orcHeader;
 
     READ_STRUCT(orcFile, orcHeader);

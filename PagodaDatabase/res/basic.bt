@@ -4,7 +4,13 @@ head:
 	u32 600
 	u32 700
 	str hello
+	str hello2
+	str hello3
 	str hello
 	ref nodes
 nodes:
 	u32 500
+	u32 0
+	ref bsp_nodes
+bsp_nodes:
+	u64 10000000

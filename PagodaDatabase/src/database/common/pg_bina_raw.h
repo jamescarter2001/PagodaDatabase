@@ -33,6 +33,10 @@ namespace Pagoda::Database {
         unsigned int padding2;
     };
 
+    struct LightFieldData {
+
+    };
+
     // BINA2
 
     struct BINAHeader {

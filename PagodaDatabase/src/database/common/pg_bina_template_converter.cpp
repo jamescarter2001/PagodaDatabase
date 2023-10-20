@@ -141,25 +141,35 @@ namespace Pagoda::Database {
 
         char* pCurrentOffset = (char*)nh + sizeof(NodeHeader);
 
-        std::string line;
-        while (std::getline(srcFile, line)) {
-            if (line.at(0) == '\t') {
-                std::string entry = line.substr(1, line.size() - 1);
+        try {
+            std::string line;
+            while (std::getline(srcFile, line)) {
+                if (line.at(0) == '\t') {
+                    std::string entry = line.substr(1, line.size() - 1);
 
-                std::vector<std::string> fragments = DatabaseUtils::SplitString(entry, " ");
-                if (fragments.size() < 2) { continue; }
-                this->WriteData(&pCurrentOffset, fragments[0], fragments[1]);
+                    std::vector<std::string> fragments = DatabaseUtils::SplitString(entry, " ");
+                    if (fragments.size() < 2) {
+                        continue;
+                    }
+                    for (int i = 1; i < fragments.size(); i++) {
+                        this->WriteData(&pCurrentOffset, fragments[0], fragments[i]);
+                    }
+                }
             }
+
+            memcpy(pCurrentOffset, this->m_stringTable.str().c_str(), this->m_stringTable.str().size());
+            pCurrentOffset += this->m_stringTable.str().size();
+            memcpy(pCurrentOffset, this->m_offsetTable.str().c_str(), this->m_offsetTable.str().size());
+
+            std::ofstream outFile(dest, std::ios::out | std::ios::binary);
+            outFile.write(outHeap, bh->fileSize);
+            outFile.close();
+
+        } catch (...) {
+            std::cout << "Invalid template file." << std::endl;
+            delete[] outHeap;
+            return;
         }
-
-        memcpy(pCurrentOffset, this->m_stringTable.str().c_str(), this->m_stringTable.str().size());
-        pCurrentOffset += this->m_stringTable.str().size();
-        memcpy(pCurrentOffset, this->m_offsetTable.str().c_str(), this->m_offsetTable.str().size());
-
-        std::ofstream outFile(dest, std::ios::out | std::ios::binary);
-        outFile.write(outHeap, bh->fileSize);
-        outFile.close();
-
         delete[] outHeap;
     }
 
@@ -177,26 +187,28 @@ namespace Pagoda::Database {
                 // Ignore blank lines.
                 if (fragments.size() < 2) { continue; }
 
-                // Calculate string table size.
-                if (fragments[0] == BINA_SYM_STR) {
-                    auto stringEntry = this->m_stringTablePositionMap.find(fragments[1]);
+                for (int i = 1; i < fragments.size(); i++) {
+                    // Calculate string table size.
+                    if (fragments[0] == BINA_SYM_STR) {
+                        auto stringEntry = this->m_stringTablePositionMap.find(fragments[i]);
 
-                    // If string is already in the table, reuse and don't write again.
-                    if (stringEntry == this->m_stringTablePositionMap.end()) {
-                        this->m_stringTablePositionMap.insert({fragments[1], (unsigned int)this->m_stringTable.str().size()});
+                        // If string is already in the table, reuse and don't write again.
+                        if (stringEntry == this->m_stringTablePositionMap.end()) {
+                            this->m_stringTablePositionMap.insert({fragments[i], (unsigned int)this->m_stringTable.str().size()});
 
-                        this->m_stringTable << fragments[1] << '\0';
+                            this->m_stringTable << fragments[i] << '\0';
+                        }
                     }
-                }
 
-                // If pointer type, append offset.
-                if (fragments[0] == BINA_SYM_STR || fragments[0] == BINA_SYM_REF) {
-                    this->m_offsets.push_back(this->m_dataBlockSize - lastOffset);
-                    lastOffset = this->m_dataBlockSize;
-                }
+                    // If pointer type, append offset.
+                    if (fragments[0] == BINA_SYM_STR || fragments[0] == BINA_SYM_REF) {
+                        this->m_offsets.push_back(this->m_dataBlockSize - lastOffset);
+                        lastOffset = this->m_dataBlockSize;
+                    }
 
-                // Calculate data block size.
-                this->m_dataBlockSize += GetSizeOfType(fragments[0]);
+                    // Calculate data block size.
+                    this->m_dataBlockSize += GetSizeOfType(fragments[0]);
+                }
             }
 
             std::vector<std::string> fragments = DatabaseUtils::SplitString(line, ":");

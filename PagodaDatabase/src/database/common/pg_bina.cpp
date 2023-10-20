@@ -7,7 +7,8 @@ namespace Pagoda::Database {
         unsigned long long current = start;
 
         std::vector<unsigned long long> offsets;
-        for (unsigned int i = 0; i < offsetTableLength;) {
+        unsigned int i = 0;
+        while (i < offsetTableLength) {
             if (*offsetTable & BINA_OFFSET_6) {
                 unsigned long o = 0;
 
@@ -19,6 +20,7 @@ namespace Pagoda::Database {
 
                 offsets.push_back(current);
                 offsetTable++;
+                i++;
             } else if (*offsetTable & BINA_OFFSET_14) {
                 unsigned long o = 0;
 
@@ -31,6 +33,7 @@ namespace Pagoda::Database {
 
                 offsets.push_back(current);
                 offsetTable = offsetTable + 2;
+                i = i + 2;
             } else if (*offsetTable & BINA_OFFSET_30) {
                 unsigned long o = 0;
 
@@ -43,6 +46,7 @@ namespace Pagoda::Database {
 
                 offsets.push_back(current);
                 offsetTable = offsetTable + 4;
+                i = i + 4;
             } else if (*offsetTable == '\0') {
                 // End of BINA200 offset table.
                 return offsets;

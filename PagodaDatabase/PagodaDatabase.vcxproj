@@ -132,6 +132,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\database\common\pg_bina_raw.cpp" />
     <ClCompile Include="src\database\common\pg_bina_template_converter.cpp" />
     <ClCompile Include="src\database\pac\pg_pac.cpp" />
     <ClCompile Include="src\database\common\pg_bina_writer.cpp" />

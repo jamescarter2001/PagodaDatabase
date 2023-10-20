@@ -10,6 +10,10 @@
 #define BINA_SYM_U16 "u16"
 #define BINA_SYM_U32 "u32"
 #define BINA_SYM_U64 "u64"
+#define BINA_SYM_S8 "s8"
+#define BINA_SYM_S16 "s16"
+#define BINA_SYM_S32 "s32"
+#define BINA_SYM_S64 "s64"
 #define BINA_SYM_F32 "f32"
 #define BINA_SYM_F64 "f64"
 #define BINA_SYM_STR "str"
@@ -25,13 +29,13 @@ namespace Pagoda::Database {
         BINATemplateConverter(unsigned int ptrSize);
         virtual ~BINATemplateConverter();
 
-        void ConvertTemplateAndSave(const char src[], const char dest[], unsigned int ptrSize = 4);
+        void ConvertTemplateAndSave(const char src[], const char dest[], unsigned int ptrSize = 4, bool bigEndian = false);
 
     private:
         size_t GetSizeOfType(std::string type);
 
         void Write(char** dst, void* data, std::string type);
-        void WriteData(char** ppCurrentOffset, std::string type, std::string data);
+        void WriteData(char** ppCurrentOffset, std::string type, std::string data, bool bigEndian = false);
 
         void InspectTemplate(const char src[]);
 

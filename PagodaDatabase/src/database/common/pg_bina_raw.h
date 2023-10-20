@@ -2,7 +2,12 @@
 
 #define ADD_DATA_LENGTH 0x18
 
+#define ENDIAN_FLAG_BIG 'B'
+#define ENDIAN_FLAG_LITTLE 'L'
+
 namespace Pagoda::Database {
+
+    char SwapFlag(char flag);
 
     // PACx2
     
@@ -48,6 +53,8 @@ namespace Pagoda::Database {
         short Unknown1;
     };
 
+    void SwapBINAHeader(BINAHeader* bh);
+
     struct PACProxyTableEntry {
         char* type;
         char* name;
@@ -71,4 +78,6 @@ namespace Pagoda::Database {
         short padding;
         char additionalData[ADD_DATA_LENGTH];
     };
+
+    void SwapNodeHeader(NodeHeader* nh);
 }

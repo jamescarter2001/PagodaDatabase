@@ -24,6 +24,22 @@ namespace Pagoda::Database {
             s = sizeof(uint64_t);
         }
 
+        if (type == BINA_SYM_S8) {
+            s = sizeof(int8_t);
+        }
+
+        if (type == BINA_SYM_S16) {
+            s = sizeof(int16_t);
+        }
+
+        if (type == BINA_SYM_S32) {
+            s = sizeof(int32_t);
+        }
+
+        if (type == BINA_SYM_S64) {
+            s = sizeof(int64_t);
+        }
+
         if (type == BINA_SYM_F32) {
             s = sizeof(float);
         }
@@ -49,7 +65,7 @@ namespace Pagoda::Database {
         *dst += s;
     }
 
-    void BINATemplateConverter::WriteData(char** ppCurrentOffset, std::string type, std::string data) {
+    void BINATemplateConverter::WriteData(char** ppCurrentOffset, std::string type, std::string data, bool bigEndian) {
         if (type == BINA_SYM_U8) {
             uint8_t d = (uint8_t)std::stoi(data);
             this->Write(ppCurrentOffset, &d, type);
@@ -57,27 +73,57 @@ namespace Pagoda::Database {
 
         if (type == BINA_SYM_U16) {
             uint16_t d = (uint16_t)std::stoi(data);
+            if (bigEndian) { d = _byteswap_ushort(d); }
             this->Write(ppCurrentOffset, &d, type);
         }
 
         if (type == BINA_SYM_U32) {
             uint32_t d = (uint32_t)std::stoi(data);
+            if (bigEndian) { d = _byteswap_ulong(d); }
             this->Write(ppCurrentOffset, &d, type);
         }
 
         if (type == BINA_SYM_U64) {
-            uint64_t d = (uint64_t)std::stoi(data);
+            uint64_t d = (uint64_t)std::stoull(data);
+            if (bigEndian) { d = _byteswap_uint64(d); }
+            this->Write(ppCurrentOffset, &d, type);
+        }
+
+        if (type == BINA_SYM_S8) {
+            int8_t d = (int8_t)std::stoi(data);
+            this->Write(ppCurrentOffset, &d, type);
+        }
+
+        if (type == BINA_SYM_S16) {
+            int16_t d = (int16_t)std::stoi(data);
+            if (bigEndian) { d = _byteswap_ushort(d); }
+            this->Write(ppCurrentOffset, &d, type);
+        }
+
+        if (type == BINA_SYM_S32) {
+            int32_t d = (int32_t)std::stoi(data);
+            if (bigEndian) { d = _byteswap_ulong(d); }
+            this->Write(ppCurrentOffset, &d, type);
+        }
+
+        if (type == BINA_SYM_S64) {
+            int64_t d = (int64_t)std::stoll(data);
+            if (bigEndian) { d = _byteswap_uint64(d); }
             this->Write(ppCurrentOffset, &d, type);
         }
 
         if (type == BINA_SYM_F32) {
-            float d = (float)std::stof(data);
-            this->Write(ppCurrentOffset, &d, type);
+            float fl = (float)std::stof(data);
+            unsigned long* d = (unsigned long*)&fl;
+            if (bigEndian) { *d = _byteswap_ulong(*d); }
+            this->Write(ppCurrentOffset, d, type);
         }
 
         if (type == BINA_SYM_F64) {
-            double d = (double)std::stod(data);
-            this->Write(ppCurrentOffset, &d, type);
+            double doub = (double)std::stod(data);
+            unsigned long long* d = (unsigned long long*)&doub;
+            if (bigEndian) { *d = _byteswap_uint64(*d); }
+            this->Write(ppCurrentOffset, d, type);
         }
 
         if (type == BINA_SYM_STR) {
@@ -85,11 +131,13 @@ namespace Pagoda::Database {
 
             if (this->m_ptrSize == PTR_SIZE_32) {
                 uint32_t offset = (uint32_t)(this->m_dataBlockSize + str->second);
+                if (bigEndian) { offset = _byteswap_ulong(offset); }
                 this->Write(ppCurrentOffset, &offset, BINA_SYM_U32);
             }
 
             if (this->m_ptrSize == PTR_SIZE_64) {
                 uint64_t offset = this->m_dataBlockSize + str->second;
+                if (bigEndian) { offset = _byteswap_uint64(offset); }
                 this->Write(ppCurrentOffset, &offset, BINA_SYM_U64);
             }
         }
@@ -97,17 +145,19 @@ namespace Pagoda::Database {
         if (type == BINA_SYM_REF) {
             if (this->m_ptrSize == 4) {
                 uint32_t offset = this->m_offsetMap.find(data)->second;
+                if (bigEndian) { offset = _byteswap_ulong(offset); }
                 this->Write(ppCurrentOffset, &offset, BINA_SYM_U32);
             }
 
             if (this->m_ptrSize == 8) {
                 uint64_t offset = this->m_offsetMap.find(data)->second;
+                if (bigEndian) { offset = _byteswap_uint64(offset); }
                 this->Write(ppCurrentOffset, &offset, BINA_SYM_U64);
             }
         }
     }
 
-    void BINATemplateConverter::ConvertTemplateAndSave(const char src[], const char dest[], unsigned int ptrSize) {
+    void BINATemplateConverter::ConvertTemplateAndSave(const char src[], const char dest[], unsigned int ptrSize, bool bigEndian) {
         this->m_ptrSize = ptrSize;
         this->InspectTemplate(src);
 
@@ -152,7 +202,7 @@ namespace Pagoda::Database {
                         continue;
                     }
                     for (int i = 1; i < fragments.size(); i++) {
-                        this->WriteData(&pCurrentOffset, fragments[0], fragments[i]);
+                        this->WriteData(&pCurrentOffset, fragments[0], fragments[i], bigEndian);
                     }
                 }
             }
@@ -161,8 +211,15 @@ namespace Pagoda::Database {
             pCurrentOffset += this->m_stringTable.str().size();
             memcpy(pCurrentOffset, this->m_offsetTable.str().c_str(), this->m_offsetTable.str().size());
 
+            unsigned int fileSize = bh->fileSize;
+
+            if (bigEndian) {
+                SwapBINAHeader(bh);
+                SwapNodeHeader(nh);
+            }
+
             std::ofstream outFile(dest, std::ios::out | std::ios::binary);
-            outFile.write(outHeap, bh->fileSize);
+            outFile.write(outHeap, fileSize);
             outFile.close();
 
         } catch (...) {

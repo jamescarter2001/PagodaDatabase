@@ -10,3 +10,4 @@
 #include <csignal>
 #include <fstream>
 #include <map>
+#include <type_traits>

@@ -71,12 +71,20 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pgpch.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>$(SolutionDir)PagodaDatabase\src\database;$(SolutionDir)PagodaDatabase\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -132,21 +140,25 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\database\lightfield\pg_lightfield.cpp" />
     <ClCompile Include="src\database\common\pg_bina_raw.cpp" />
     <ClCompile Include="src\database\common\pg_bina_template_converter.cpp" />
     <ClCompile Include="src\database\pac\pg_pac.cpp" />
     <ClCompile Include="src\database\common\pg_bina_writer.cpp" />
     <ClCompile Include="src\database\model\pg_model.cpp" />
     <ClCompile Include="src\application.cpp" />
+    <ClCompile Include="src\database\common\pg_node_data.cpp" />
     <ClCompile Include="src\database\util\pg_database_util.cpp" />
     <ClCompile Include="src\pgpch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\database\common\pg_bina.cpp" />
     <ClCompile Include="src\database\common\pg_bina_reader.cpp" />
     <ClCompile Include="src\database\set\pg_set.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\database\lightfield\pg_lightfield.h" />
     <ClInclude Include="src\database\common\pg_bina_template_converter.h" />
     <ClInclude Include="src\database\pac\pg_pac.h" />
     <ClInclude Include="src\database\common\pg_bina_writer.h" />

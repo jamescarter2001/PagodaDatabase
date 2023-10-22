@@ -58,7 +58,7 @@ namespace Pagoda::Database {
         return offsets;
     }
 
-    std::vector<unsigned long long> Node::PrintOffsets(char* offsetTable, unsigned int offsetTableLength, unsigned int start) {
+    std::vector<unsigned long long> Node::PrintOffsets(unsigned long long start, char* offsetTable, unsigned int offsetTableLength) {
         std::vector<unsigned long long> offsets = Node::SeekOffsets(start, offsetTable, offsetTableLength);
 
         for (unsigned long long o : offsets) {

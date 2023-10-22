@@ -187,7 +187,7 @@ namespace Pagoda::Database {
         nh->stringTableOffset = (unsigned int)this->m_dataBlockSize;
         nh->stringTableLength = (unsigned int)(this->m_stringTable.str().size());
         nh->offsetTableLength = (unsigned int)(this->m_stringTable.str().size());
-        nh->additionalDataLength = 0x18;
+        nh->additionalDataLength = ADD_DATA_LENGTH;
 
         char* pCurrentOffset = (char*)nh + sizeof(NodeHeader);
 
@@ -224,8 +224,6 @@ namespace Pagoda::Database {
 
         } catch (...) {
             std::cout << "Invalid template file." << std::endl;
-            delete[] outHeap;
-            return;
         }
         delete[] outHeap;
     }
@@ -245,7 +243,7 @@ namespace Pagoda::Database {
                 if (fragments.size() < 2) { continue; }
 
                 for (int i = 1; i < fragments.size(); i++) {
-                    // Calculate string table size.
+                    // If string type, append to string table.
                     if (fragments[0] == BINA_SYM_STR) {
                         auto stringEntry = this->m_stringTablePositionMap.find(fragments[i]);
 
@@ -257,13 +255,13 @@ namespace Pagoda::Database {
                         }
                     }
 
-                    // If pointer type, append offset.
+                    // If pointer type, append to offsets.
                     if (fragments[0] == BINA_SYM_STR || fragments[0] == BINA_SYM_REF) {
                         this->m_offsets.push_back(this->m_dataBlockSize - lastOffset);
                         lastOffset = this->m_dataBlockSize;
                     }
 
-                    // Calculate data block size.
+                    // Append to data block size.
                     this->m_dataBlockSize += GetSizeOfType(fragments[0]);
                 }
             }

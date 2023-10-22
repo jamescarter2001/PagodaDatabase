@@ -19,14 +19,12 @@ const unsigned int dataSig = 0x41544144;  // DATA
 
 const char binaVer[4] = "210";
 
-const unsigned int additionalDataLength = 0x18;
-
 namespace Pagoda::Database {
     class Node {
     public:
         static std::vector<unsigned long long> SeekOffsets(unsigned long long start, char* offsetTable, unsigned int offsetTableLength);
         static std::vector<unsigned long long> SeekOffsets(node_t* node);
 
-        static std::vector<unsigned long long> PrintOffsets(char* offsetTable, unsigned int offsetTableLength, unsigned int start);
+        static std::vector<unsigned long long> PrintOffsets(unsigned long long start, char* offsetTable, unsigned int offsetTableLength);
     };
 }

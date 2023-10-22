@@ -10,14 +10,6 @@
 #define TAG_TYPE_RANGE_SPAWNING "RangeSpawning"
 
 namespace Pagoda::Database {
-    struct Vector3 {
-        float X, Y, Z;
-    };
-
-    struct Vector4 {
-        float X, Y, Z, W;
-    };
-
     struct RangersUUID {
         unsigned int X, Y, Z, W;
     };
@@ -59,8 +51,8 @@ namespace Pagoda::Database {
     public:
         SetData();
         SetData(std::vector<ObjectEntry*> objectEntries);
-        static SetData SetDataFromNodeData(data_t* data);
         virtual ~SetData();
+        static SetData SetDataFromNodeData(data_t* data);
         virtual void Print() const override;
 
         static void PrintTag(Tag* tag);

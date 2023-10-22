@@ -7,6 +7,20 @@
 
 namespace Pagoda::Database {
 
+    //Common
+
+    struct Vector3 {
+        float X, Y, Z;
+    };
+
+    struct Vector4 {
+        float X, Y, Z, W;
+    };
+
+    struct Vector5 {
+        float X, Y, Z, W, A;
+    };
+
     char SwapFlag(char flag);
 
     // PACx2
@@ -36,10 +50,6 @@ namespace Pagoda::Database {
         char reservedValues[2];
         unsigned int signature;
         unsigned int padding2;
-    };
-
-    struct LightFieldData {
-
     };
 
     // BINA2

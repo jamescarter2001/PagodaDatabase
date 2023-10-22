@@ -48,6 +48,12 @@
     <ClCompile Include="src\database\common\pg_bina_raw.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\database\lightfield\pg_lightfield.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\database\common\pg_node_data.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\database\common\pg_bina.h">
@@ -84,6 +90,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\database\util\pg_database_util.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\database\lightfield\pg_lightfield.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

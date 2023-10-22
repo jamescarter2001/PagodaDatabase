@@ -7,12 +7,22 @@
 
 #include "database/set/pg_set.h"
 #include "database/model/pg_model.h"
+#include "database/lightfield/pg_lightfield.h"
 
 int main() {
+    Pagoda::Database::BinaReader binaReader;
+
     Pagoda::Database::BINATemplateConverter conv;
     conv.ConvertTemplateAndSave("res/basic.bt", "../output/test.orc", PTR_SIZE_32, false);
 
-    std::ifstream orcFile("C:/sonic2010/tools/stg901_obj/stg901_grass.orc", std::ios::binary | std::ios::in);
+    std::string stg = "901";
+    std::vector<data_t*> lfFile = binaReader.Read("C:/sonic2010/dvd_builder_image/sonic2010/stg" + stg + "/stg" + stg + "_obj/arc/stg" + stg + "_lfield.orc");
+    Pagoda::Database::LightFieldData lightFieldData = Pagoda::Database::LightFieldData::LightFieldDataFromNodeData(lfFile[0]);
+    lightFieldData.Print();
+
+    return 0;
+
+    std::ifstream orcFile("E:/sonic2010/dvd_builder_image/sonic2010/stg901/stg901_obj/arc/stg901_grass.orc", std::ios::binary | std::ios::in);
     Pagoda::Database::BINAV1Header orcHeader;
 
     READ_STRUCT(orcFile, orcHeader);
@@ -22,9 +32,10 @@ int main() {
         char* data = new char[orcHeader.fileSize];
         orcFile.read(data, orcHeader.fileSize);
 
-        Pagoda::Database::Node::PrintOffsets(data + sizeof(orcHeader) + orcHeader.offsetTableOffset, orcHeader.offsetTableLength, sizeof(orcHeader));
+        Pagoda::Database::Node::PrintOffsets(sizeof(orcHeader), data + sizeof(orcHeader) + orcHeader.offsetTableOffset, orcHeader.offsetTableLength);
 
         delete[] data;
+        return 0;
     }
 
     float cubeArray[] = {
@@ -83,8 +94,6 @@ int main() {
     bw.AddString(en1);
     bw.AddString(en2);
     bw.Write("../output/dummy_cube.orc");
-
-    Pagoda::Database::BinaReader binaReader;
 
     std::vector<data_t*> binaFile = binaReader.Read("C:/w1r03_gedit/w1r03_autotest.gedit");
     Pagoda::Database::SetData setData = Pagoda::Database::SetData::SetDataFromNodeData(binaFile[0]);

@@ -34,7 +34,7 @@ namespace Pagoda::Database {
     private:
         size_t GetSizeOfType(std::string type);
 
-        void Write(char** dst, void* data, std::string type);
+        void Write(char** ppDest, void* pSrc, std::string type);
         void WriteData(char** ppCurrentOffset, std::string type, std::string data, bool bigEndian = false);
 
         void InspectTemplate(const char src[]);

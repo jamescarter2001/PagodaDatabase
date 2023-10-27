@@ -4,7 +4,7 @@
 namespace Pagoda::Database {
     LightFieldData::LightFieldData() {}
 
-    LightFieldData::LightFieldData(std::vector<LightFieldObjectEntry*> objectEntries, std::vector<LightFieldBSPNodeEntry*> nodeEntries) : m_objectEntries(objectEntries), m_nodeEntries(nodeEntries) {}
+    LightFieldData::LightFieldData(std::vector<LightFieldObject*> objectEntries, std::vector<LightFieldAABBNode*> nodeEntries) : m_objectEntries(objectEntries), m_nodeEntries(nodeEntries) {}
 
     LightFieldData::~LightFieldData() {
 
@@ -33,15 +33,15 @@ namespace Pagoda::Database {
     LightFieldData LightFieldData::LightFieldDataFromNodeData(data_t* data) {
         LightFieldHeader* header = (LightFieldHeader*)data;
 
-        std::vector<LightFieldObjectEntry*> objectEntries;
+        std::vector<LightFieldObject*> objectEntries;
         for (unsigned int i = 0; i < header->objectCount; i++) {
-            LightFieldObjectEntry* e = header->objectEntries + i;
+            LightFieldObject* e = header->objectEntries + i;
             objectEntries.push_back(e);
         }
 
-        std::vector<LightFieldBSPNodeEntry*> nodeEntries;
+        std::vector<LightFieldAABBNode*> nodeEntries;
         for (unsigned int i = 0; i < header->nodeCount; i++) {
-            LightFieldBSPNodeEntry* e = header->nodeEntries + i;
+            LightFieldAABBNode* e = header->nodeEntries + i;
             nodeEntries.push_back(e);
         }
 
@@ -56,7 +56,7 @@ namespace Pagoda::Database {
         std::cout << "" << std::endl;
         std::cout << "LIGHTFIELD DATA" << std::endl;
         std::cout << "----------" << std::endl;
-        for (LightFieldObjectEntry* e : this->m_objectEntries) {
+        for (LightFieldObject* e : this->m_objectEntries) {
             std::cout << this->FormatString("Name", e->name) << std::endl;
             std::cout << this->FormatInt("Unknown Signed Integer", e->unknown1) << std::endl;
             std::cout << this->FormatObjectType("Type", e->objectType) << std::endl;
@@ -75,19 +75,19 @@ namespace Pagoda::Database {
 
         std::cout << "LIGHTFIELD DATA [NODE]" << std::endl;
         std::cout << "----------" << std::endl;
-        for (LightFieldBSPNodeEntry* e : this->m_nodeEntries) {
-            std::cout << this->FormatInt("Unknown Signed Integer (1)", e->unknown1) << std::endl;
-            std::cout << this->FormatInt("Unknown Signed Integer (2)", e->unknown2) << std::endl;
-            std::cout << this->FormatVector3("Unknown Vector 3 (1)", e->unknownVector1) << std::endl;
-            std::cout << this->FormatVector3("Unknown Vector 3 (2)", e->unknownVector2) << std::endl;
+        for (LightFieldAABBNode* e : this->m_nodeEntries) {
+            std::cout << this->FormatInt("Unknown Signed Integer (1)", e->leftIndex) << std::endl;
+            std::cout << this->FormatInt("Unknown Signed Integer (2)", e->rightIndex) << std::endl;
+            std::cout << this->FormatVector3("Unknown Vector 3 (1)", e->bBoxMin) << std::endl;
+            std::cout << this->FormatVector3("Unknown Vector 3 (2)", e->bBoxMax) << std::endl;
             std::cout << "----------" << std::endl;
 
-            if (e->unknown1 > highestInt1) {
-                highestInt1 = e->unknown1;
+            if (e->leftIndex > highestInt1) {
+                highestInt1 = e->leftIndex;
             }
 
-            if (e->unknown2 > highestInt2) {
-                highestInt2 = e->unknown2;
+            if (e->rightIndex > highestInt2) {
+                highestInt2 = e->rightIndex;
             }
         }
 

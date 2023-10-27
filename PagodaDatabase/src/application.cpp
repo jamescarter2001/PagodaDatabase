@@ -5,24 +5,22 @@
 #include "database/common/pg_bina_writer.h"
 #include "database/common/pg_bina_template_converter.h"
 
-#include "database/set/pg_set.h"
+#include "database/hedgehog/set/pg_set.h"
 #include "database/model/pg_model.h"
-#include "database/lightfield/pg_lightfield.h"
+#include "database/hedgehog/lightfield/pg_lightfield.h"
 
 int main() {
     Pagoda::Database::BinaReader binaReader;
 
     Pagoda::Database::BINATemplateConverter conv;
-    conv.ConvertTemplateAndSave("res/basic.bt", "../output/test.orc", PTR_SIZE_32, false);
+    conv.ConvertTemplateAndSave("res/basic.bt", "../output/test.orc", PTR_SIZE_64, true);
 
     std::string stg = "901";
     std::vector<data_t*> lfFile = binaReader.Read("C:/sonic2010/dvd_builder_image/sonic2010/stg" + stg + "/stg" + stg + "_obj/arc/stg" + stg + "_lfield.orc");
     Pagoda::Database::LightFieldData lightFieldData = Pagoda::Database::LightFieldData::LightFieldDataFromNodeData(lfFile[0]);
     lightFieldData.Print();
 
-    return 0;
-
-    std::ifstream orcFile("E:/sonic2010/dvd_builder_image/sonic2010/stg901/stg901_obj/arc/stg901_grass.orc", std::ios::binary | std::ios::in);
+    std::ifstream orcFile("C:/sonic2010/dvd_builder_image/sonic2010/stg901/stg901_obj/arc/stg901_grass.orc", std::ios::binary | std::ios::in);
     Pagoda::Database::BINAV1Header orcHeader;
 
     READ_STRUCT(orcFile, orcHeader);

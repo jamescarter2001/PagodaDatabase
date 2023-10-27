@@ -21,7 +21,7 @@
     <ClCompile Include="src\database\common\pg_bina_reader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\database\set\pg_set.cpp">
+    <ClCompile Include="src\database\hedgehog\set\pg_set.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\application.cpp">
@@ -36,7 +36,7 @@
     <ClCompile Include="src\database\common\pg_bina_writer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\database\pac\pg_pac.cpp">
+    <ClCompile Include="src\database\hedgehog\pac\pg_pac.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\database\util\pg_database_util.cpp">
@@ -48,7 +48,7 @@
     <ClCompile Include="src\database\common\pg_bina_raw.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\database\lightfield\pg_lightfield.cpp">
+    <ClCompile Include="src\database\hedgehog\lightfield\pg_lightfield.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\database\common\pg_node_data.cpp">
@@ -68,13 +68,13 @@
     <ClInclude Include="src\database\common\pg_node_data.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\database\set\pg_set.h">
+    <ClInclude Include="src\database\hedgehog\set\pg_set.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\pgpch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\database\set\pg_tag.h">
+    <ClInclude Include="src\database\hedgehog\set\pg_tag.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\database\model\pg_model.h">
@@ -83,7 +83,7 @@
     <ClInclude Include="src\database\common\pg_bina_writer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\database\pac\pg_pac.h">
+    <ClInclude Include="src\database\hedgehog\pac\pg_pac.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\database\common\pg_bina_template_converter.h">
@@ -92,7 +92,7 @@
     <ClInclude Include="src\database\util\pg_database_util.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\database\lightfield\pg_lightfield.h">
+    <ClInclude Include="src\database\hedgehog\lightfield\pg_lightfield.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

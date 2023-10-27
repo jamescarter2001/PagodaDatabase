@@ -7,7 +7,7 @@
 
 namespace Pagoda::Database {
 
-    //Common
+    // Common
 
     struct Vector3 {
         float X, Y, Z;

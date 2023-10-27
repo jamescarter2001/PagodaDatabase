@@ -1,7 +1,7 @@
 #pragma once
 #include "pgpch.h"
 
-#include "pg_bina.h"
+#include "database/common/pg_bina.h"
 
 #define READ_BYTES(f, s, n) f.read((char*)s, n)
 #define READ_STRUCT(f, s) f.read((char*)&s, sizeof(s))

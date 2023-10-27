@@ -1,7 +1,7 @@
 #pragma once
 #include "pgpch.h"
 
-#include "pg_bina_raw.h"
+#include "database/common/pg_bina_raw.h"
 
 typedef char bina_t;
 typedef char node_t;
